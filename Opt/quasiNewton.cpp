@@ -6,7 +6,6 @@
 
 using namespace rlinalg;
 
-
 double optimize::backtracking(std::function<double(std::vector<double>& x)> f, 
 	std::function<std::vector<double>(std::vector<double>& x)> grad_f, 
 	std::vector<double>& xk, std::vector<double>& sk, const std::vector<double>& pk, 
@@ -15,7 +14,6 @@ double optimize::backtracking(std::function<double(std::vector<double>& x)> f,
 	bool down = false;
 	std::vector<double> xk1(xk.size(), 0.);
 	double alpha = 1.;
-	//double f_xk = f(xk);
 	double desc_k = gradf_xk * pk;
 
 	for (int i = 0; i < maxIt; ++i)
@@ -83,23 +81,25 @@ bool optimize::BFGS(std::function<double(std::vector<double>& x)> f, std::functi
 	double fx_k = f(xk), fx_k1;
 	double criterion = 1.;
 	size_t iter = 0;
+	df_k = grad_f(xk);
 	for (iter; iter < maxIt && criterion > tol; ++iter)
 	{
-		df_k = grad_f(xk);
+		// direction
 		pk = -1.0 * mult(invHes, df_k);
 		xk1 = xk;
+		// choose step, xk, sk are updated inside the funtion
 		double alpha = backtracking(f, grad_f, xk1, sk, pk, df_k, fx_k);
-		//sk = alpha * pk;
-		//xk1 = xk + sk;
+		
 		df_k1 = grad_f(xk1);
 		y = df_k1 - df_k;
 
-		// Hessian update
 		update_Hessian(invHes, y, sk);
 		fx_k1 = f(xk1);
+		
 		criterion = fabs(fx_k1 - fx_k);
 		xk = xk1;
 		fx_k = fx_k1;
+		df_k = df_k1;
 	}
 	std::cout << "Tolerance = " << std::setprecision(15) << tol << std::endl;
 	std::cout << "Iterations: " << iter << std::endl;
