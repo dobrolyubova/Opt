@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="interps.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="quasiNewton.cpp" />
     <ClCompile Include="vect_alg.cpp" />
